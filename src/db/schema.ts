@@ -1,4 +1,24 @@
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  pgEnum,
+  integer,
+} from "drizzle-orm/pg-core";
+
+export const workspaceType = pgEnum("workspace_type", ["personal", "team"]);
+export const teamspacePermission = pgEnum("teamspace_permission", [
+  "public, default, private",
+]);
+
+export const noteDetailType = pgEnum("note_detail_type", [
+  "list",
+  "code",
+  "normal text",
+  "header 1",
+  "header 2",
+]);
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -64,6 +84,8 @@ export const verification = pgTable("verification", {
 export const organization = pgTable("organization", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
+  description: text("description").notNull(),
+  type: workspaceType("type").notNull(),
   slug: text("slug").unique(),
   logo: text("logo"),
   createdAt: timestamp("created_at").notNull(),
@@ -94,4 +116,37 @@ export const invitation = pgTable("invitation", {
   inviterId: text("inviter_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+});
+
+export const teamspace = pgTable("teamspace", {
+  id: text("id").primaryKey(),
+  organizationId: text("organization_id")
+    .notNull()
+    .references(() => organization.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  permission: teamspacePermission("permission").notNull(),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+});
+
+export const note = pgTable("note", {
+  id: text("id").primaryKey(),
+  teamspaceId: text("teamspace_id")
+    .notNull()
+    .references(() => teamspace.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+});
+
+export const noteDetail = pgTable("note_detail", {
+  id: text("id").primaryKey(),
+  noteId: text("note_id")
+    .notNull()
+    .references(() => note.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  type: noteDetailType("type").notNull(),
+  order: integer("order").notNull(),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
 });
