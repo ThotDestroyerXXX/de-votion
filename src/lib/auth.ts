@@ -3,6 +3,8 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import db from "@/db"; // your drizzle instance
 import { nextCookies } from "better-auth/next-js";
 import { organization } from "better-auth/plugins";
+import { workspaceType } from "@/db/schema";
+import { ac, roles } from "@/lib/permissions";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -11,6 +13,20 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
+  },
+  organization: {
+    additionalFields: {
+      description: {
+        type: "string",
+        required: true,
+      },
+      type: {
+        type: workspaceType,
+        required: true,
+      },
+    },
+    ac,
+    roles,
   },
   socialProviders: {
     google: {
