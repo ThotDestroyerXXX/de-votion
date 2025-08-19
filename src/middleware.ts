@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  if (!session && request.nextUrl.pathname === "/") {
+  if (!session && request.nextUrl.pathname.startsWith("/workspace")) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 }

@@ -14,27 +14,34 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 8,
   },
-  organization: {
-    additionalFields: {
-      description: {
-        type: "string",
-        required: true,
-      },
-      type: {
-        type: workspaceType,
-        required: true,
-      },
-    },
-    ac,
-    roles,
-  },
+
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
-  plugins: [organization(), nextCookies()],
+  plugins: [
+    organization({
+      schema: {
+        organization: {
+          additionalFields: {
+            description: {
+              type: "string",
+              required: true,
+            },
+            type: {
+              type: workspaceType.enumValues,
+              required: true,
+            },
+          },
+          ac,
+          roles,
+        },
+      },
+    }),
+    nextCookies(),
+  ],
 });
 
 export type Session = typeof auth.$Infer.Session;
