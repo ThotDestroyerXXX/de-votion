@@ -52,7 +52,7 @@ export const LoginView = () => {
         {
           onSuccess: () => {
             form.reset();
-            router.push(AUTH_ROUTES.WORKSPACE);
+            router.push(AUTH_ROUTES.HOME);
           },
           onError: ({ error }) => handleError(error.message),
         }

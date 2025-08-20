@@ -121,7 +121,8 @@
   body {
     @apply bg-background text-foreground;
   }
-  span {
+
+  .span-small {
     @apply text-muted-foreground text-xs;
   }
 }
