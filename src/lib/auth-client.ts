@@ -12,8 +12,8 @@ export const authClient = createAuthClient({
   plugins: [
     organizationClient({
       schema: inferOrgAdditionalFields<typeof auth>(),
-      ac,
-      roles,
+      ac: ac,
+      roles: roles,
     }),
   ],
 });

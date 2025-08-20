@@ -10,7 +10,6 @@ import { useState } from "react";
 import {
   AuthCard,
   AuthDivider,
-  AuthErrorAlert,
   AuthFormFooter,
   AuthSocialButton,
   RegisterFormFields,
@@ -18,6 +17,7 @@ import {
 import { AUTH_ROUTES } from "../constant";
 
 import { REGISTER_FORM_SCHEMA, RegisterFormValues } from "../lib/schemas";
+import { ErrorAlert } from "@/components/error-alert";
 
 export const RegisterView = () => {
   const [error, setError] = useState<string | null>(null);
@@ -98,7 +98,7 @@ export const RegisterView = () => {
 
             <div className='space-y-6'>
               <RegisterFormFields disabled={pending} />
-              {!!error && <AuthErrorAlert error={error} />}
+              {!!error && <ErrorAlert message={error} />}
               <Button className='w-full' disabled={pending}>
                 Continue
               </Button>

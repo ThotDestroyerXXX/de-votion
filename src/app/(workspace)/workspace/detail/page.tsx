@@ -13,10 +13,6 @@ export default async function Home() {
     redirect("/login");
   }
 
-  if (data.session.activeOrganizationId) {
-    redirect("/");
-  }
-
   return (
     <HydrateClient>
       <WorkspaceDetailView />

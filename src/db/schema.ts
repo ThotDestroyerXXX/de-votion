@@ -9,7 +9,9 @@ import {
 
 export const workspaceType = pgEnum("workspace_type", ["personal", "team"]);
 export const teamspacePermission = pgEnum("teamspace_permission", [
-  "public, default, private",
+  "public",
+  "default",
+  "private",
 ]);
 
 export const noteDetailType = pgEnum("note_detail_type", [
@@ -125,8 +127,12 @@ export const teamspace = pgTable("teamspace", {
     .references(() => organization.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   permission: teamspacePermission("permission").notNull(),
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull(),
+  createdAt: timestamp("created_at").$defaultFn(
+    () => /* @__PURE__ */ new Date()
+  ),
+  updatedAt: timestamp("updated_at").$defaultFn(
+    () => /* @__PURE__ */ new Date()
+  ),
 });
 
 export const note = pgTable("note", {

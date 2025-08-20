@@ -1,7 +1,5 @@
 "use client";
 
-import * as React from "react";
-
 import { NavMain } from "@/components/sidebar/nav-main";
 import { NavSecondary } from "@/components/sidebar/nav-secondary";
 import { NavTeamspace } from "@/components/sidebar/nav-teamspace";
@@ -20,11 +18,15 @@ export function AppSidebar({
   username,
   email,
   organizations,
+  activeOrganizationId,
+  memberRole,
   ...props
 }: React.ComponentProps<typeof Sidebar> & {
   username: string;
   email: string;
   organizations: Organization[];
+  activeOrganizationId: string;
+  memberRole: string;
 }) {
   return (
     <Sidebar className='border-r-0' {...props}>
@@ -34,13 +36,18 @@ export function AppSidebar({
             username={username}
             email={email}
             organizations={organizations}
+            currentOrganizationId={activeOrganizationId}
           />
           <CreateWorkspaceLogo />
         </div>
-        <NavMain items={sidebarData.navMain} />
+        <NavMain
+          items={sidebarData.navMain}
+          organization_id={activeOrganizationId}
+          memberRole={memberRole}
+        />
       </SidebarHeader>
       <SidebarContent>
-        <NavTeamspace workspaces={sidebarData.workspaces} />
+        <NavTeamspace activeOrganizationId={activeOrganizationId} />
         <NavSecondary items={sidebarData.navSecondary} className='mt-auto' />
       </SidebarContent>
       <SidebarRail />

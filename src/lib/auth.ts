@@ -25,6 +25,8 @@ export const auth = betterAuth({
     organization({
       schema: {
         organization: {
+          ac: ac,
+          roles: roles,
           additionalFields: {
             description: {
               type: "string",
@@ -35,8 +37,6 @@ export const auth = betterAuth({
               required: true,
             },
           },
-          ac,
-          roles,
         },
       },
     }),
