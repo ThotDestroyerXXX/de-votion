@@ -1,7 +1,6 @@
 "use client";
 
-import * as React from "react";
-import { ChevronDown, LogOut } from "lucide-react";
+import { Check, ChevronDown, LogOut } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -21,22 +20,30 @@ import { Organization } from "@/lib/auth";
 import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Loading from "../loading";
+import { trpc } from "@/trpc/client";
 
 export function TeamSwitcher({
   username,
   email,
   organizations,
+  currentOrganizationId,
 }: Readonly<{
   username: string;
   email: string;
   organizations: Organization[];
+  currentOrganizationId: string;
 }>) {
   const router = useRouter();
+  const utils = trpc.useUtils();
+  const [pending, setPending] = useState<boolean>(false);
   return (
     <SidebarMenu>
+      {pending && <Loading />}
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild disabled={pending}>
             <SidebarMenuButton className='w-full flex flex-row items-center justify-between cursor-pointer'>
               <span className='truncate font-medium'>{`${username}'s deVotion`}</span>
               <ChevronDown className='opacity-50' />
@@ -52,7 +59,33 @@ export function TeamSwitcher({
               {email}
             </DropdownMenuLabel>
             {organizations.map((org, index) => (
-              <DropdownMenuItem key={org.name} className='gap-2 p-2'>
+              <DropdownMenuItem
+                key={org.name}
+                disabled={pending}
+                className='gap-2 p-2'
+                onClick={async () => {
+                  setPending(true);
+                  await authClient.organization.setActive(
+                    {
+                      organizationId: org.id,
+                      organizationSlug: org.slug,
+                    },
+                    {
+                      onSuccess: async () => {
+                        router.refresh();
+                        await utils.invalidate();
+                        setPending(false);
+                      },
+                      onError: () => {
+                        setPending(false);
+                      },
+                    }
+                  );
+                }}
+              >
+                {currentOrganizationId === org.id && (
+                  <Check className='size-4' />
+                )}
                 <div className='flex size-6 items-center justify-center rounded-xs border'>
                   {org.logo && (
                     <Image
@@ -71,11 +104,17 @@ export function TeamSwitcher({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className='gap-2'
+              disabled={pending}
               onClick={async () => {
+                setPending(true);
+
                 await authClient.signOut({
                   fetchOptions: {
                     onSuccess: () => {
                       router.push("/login");
+                    },
+                    onError: () => {
+                      setPending(false);
                     },
                   },
                 });

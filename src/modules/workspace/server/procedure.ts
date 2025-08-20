@@ -56,6 +56,16 @@ export const workspaceRouter = createTRPCRouter({
         headers: await headers(),
       });
 
+      if (data) {
+        await auth.api.setActiveOrganization({
+          headers: await headers(),
+          body: {
+            organizationId: data.id,
+            organizationSlug: data.slug,
+          },
+        });
+      }
+
       return data;
     }),
 });

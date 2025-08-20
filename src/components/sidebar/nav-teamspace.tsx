@@ -1,3 +1,4 @@
+"use client";
 import { ChevronRight, MoreHorizontal, Plus } from "lucide-react";
 
 import {
@@ -13,36 +14,30 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { trpc } from "@/trpc/client";
 
 export function NavTeamspace({
-  workspaces,
+  activeOrganizationId,
 }: Readonly<{
-  workspaces: {
-    name: string;
-    emoji: React.ReactNode;
-    pages: {
-      name: string;
-      emoji: React.ReactNode;
-    }[];
-  }[];
+  activeOrganizationId: string;
 }>) {
+  const [data] = trpc.teamspace.getTeamspaces.useSuspenseQuery({
+    organization_id: activeOrganizationId,
+  });
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Teamspaces</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
-          {workspaces.map((workspace) => (
-            <Collapsible key={workspace.name}>
+          {data.map((teamspace) => (
+            <Collapsible key={teamspace.teamspace.id}>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link href='#'>
-                    <span>{workspace.emoji}</span>
-                    <span>{workspace.name}</span>
+                    <span>{teamspace.teamspace.name}</span>
                   </Link>
                 </SidebarMenuButton>
                 <CollapsibleTrigger asChild>
@@ -56,7 +51,7 @@ export function NavTeamspace({
                 <SidebarMenuAction showOnHover>
                   <Plus />
                 </SidebarMenuAction>
-                <CollapsibleContent>
+                {/* <CollapsibleContent>
                   <SidebarMenuSub>
                     {workspace.pages.map((page) => (
                       <SidebarMenuSubItem key={page.name}>
@@ -69,16 +64,10 @@ export function NavTeamspace({
                       </SidebarMenuSubItem>
                     ))}
                   </SidebarMenuSub>
-                </CollapsibleContent>
+                </CollapsibleContent> */}
               </SidebarMenuItem>
             </Collapsible>
           ))}
-          <SidebarMenuItem>
-            <SidebarMenuButton className='text-sidebar-foreground/70'>
-              <MoreHorizontal />
-              <span>More</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

@@ -7,9 +7,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { CreateTeamspaceDialog } from "./create-teamspace-dialog";
 
 export function NavMain({
   items,
+  organization_id,
+  memberRole,
 }: Readonly<{
   items: {
     title: string;
@@ -18,23 +21,24 @@ export function NavMain({
     isActive?: boolean;
     dialog?: React.ElementType;
   }[];
+  organization_id: string;
+  memberRole: string;
 }>) {
   return (
     <SidebarMenu>
       {items.map((item) => (
         <SidebarMenuItem key={item.title}>
-          {item.dialog ? (
-            <item.dialog />
-          ) : (
-            <SidebarMenuButton asChild isActive={item.isActive}>
-              <a href={item.url}>
-                <item.icon />
-                <span>{item.title}</span>
-              </a>
-            </SidebarMenuButton>
-          )}
+          <SidebarMenuButton asChild isActive={item.isActive}>
+            <a href={item.url}>
+              <item.icon />
+              <span>{item.title}</span>
+            </a>
+          </SidebarMenuButton>
         </SidebarMenuItem>
       ))}
+      {(memberRole === "admin" || memberRole === "owner") && (
+        <CreateTeamspaceDialog organization_id={organization_id} />
+      )}
     </SidebarMenu>
   );
 }

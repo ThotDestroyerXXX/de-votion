@@ -1,4 +1,3 @@
-import { CreateTeamspaceDialog } from "@/components/sidebar/create-teamspace-dialog";
 import {
   AudioWaveform,
   Blocks,
@@ -9,7 +8,6 @@ import {
   Search,
   Settings2,
   Trash2,
-  UsersRound,
 } from "lucide-react";
 
 export const sidebarData = {
@@ -48,12 +46,6 @@ export const sidebarData = {
       url: "#",
       icon: Inbox,
       dialog: undefined,
-    },
-    {
-      title: "Create Teamspace",
-      url: "#",
-      icon: UsersRound,
-      dialog: CreateTeamspaceDialog,
     },
   ],
   navSecondary: [

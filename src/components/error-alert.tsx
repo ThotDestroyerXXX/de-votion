@@ -3,17 +3,11 @@
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { OctagonAlertIcon } from "lucide-react";
 
-interface AuthErrorAlertProps {
-  error: string | null;
-}
-
-export const AuthErrorAlert = ({ error }: AuthErrorAlertProps) => {
-  if (!error) return null;
-
+export function ErrorAlert({ message }: Readonly<{ message: string }>) {
   return (
     <Alert className='bg-destructive/10 text-center border-none'>
       <OctagonAlertIcon className='size-4 !text-destructive' />
-      <AlertTitle>{error}</AlertTitle>
+      <AlertTitle>{message}</AlertTitle>
     </Alert>
   );
-};
+}

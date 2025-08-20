@@ -10,13 +10,13 @@ import { useState } from "react";
 import {
   AuthCard,
   AuthDivider,
-  AuthErrorAlert,
   AuthFormFooter,
   AuthSocialButton,
   LoginFormFields,
 } from "../components";
 import { AUTH_ROUTES } from "../constant";
 import { LOGIN_FORM_SCHEMA, LoginFormValues } from "../lib";
+import { ErrorAlert } from "@/components/error-alert";
 
 export const LoginView = () => {
   const [error, setError] = useState<string | null>(null);
@@ -94,7 +94,7 @@ export const LoginView = () => {
 
             <div className='space-y-6'>
               <LoginFormFields disabled={pending} />
-              {!!error && <AuthErrorAlert error={error} />}
+              {!!error && <ErrorAlert message={error} />}
               <Button className='w-full' disabled={pending}>
                 Continue
               </Button>
