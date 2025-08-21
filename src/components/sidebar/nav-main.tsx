@@ -8,6 +8,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { CreateTeamspaceDialog } from "./create-teamspace-dialog";
+import { SearchModal } from "./search-modal";
 
 export function NavMain({
   items,
@@ -26,6 +27,7 @@ export function NavMain({
 }>) {
   return (
     <SidebarMenu>
+      <SearchModal organization_id={organization_id} />
       {items.map((item) => (
         <SidebarMenuItem key={item.title}>
           <SidebarMenuButton asChild isActive={item.isActive}>
@@ -36,6 +38,7 @@ export function NavMain({
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}
+
       {(memberRole === "admin" || memberRole === "owner") && (
         <CreateTeamspaceDialog organization_id={organization_id} />
       )}

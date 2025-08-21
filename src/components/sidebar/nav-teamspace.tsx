@@ -1,5 +1,5 @@
 "use client";
-import { ChevronRight, MoreHorizontal, Plus } from "lucide-react";
+import { ChevronRight, Plus } from "lucide-react";
 
 import {
   Collapsible,
@@ -14,6 +14,9 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { trpc } from "@/trpc/client";
@@ -35,36 +38,34 @@ export function NavTeamspace({
           {data.map((teamspace) => (
             <Collapsible key={teamspace.teamspace.id}>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href='#'>
-                    <span>{teamspace.teamspace.name}</span>
-                  </Link>
+                <SidebarMenuButton asChild className='ml-4'>
+                  <span>{teamspace.teamspace.name}</span>
                 </SidebarMenuButton>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuAction
-                    className='bg-sidebar-accent text-sidebar-accent-foreground left-2 data-[state=open]:rotate-90'
+                    className='bg-sidebar-accent text-sidebar-accent-foreground left-0 data-[state=open]:rotate-90'
                     showOnHover
                   >
                     <ChevronRight />
                   </SidebarMenuAction>
                 </CollapsibleTrigger>
-                <SidebarMenuAction showOnHover>
-                  <Plus />
-                </SidebarMenuAction>
-                {/* <CollapsibleContent>
+
+                <CollapsibleContent>
                   <SidebarMenuSub>
-                    {workspace.pages.map((page) => (
-                      <SidebarMenuSubItem key={page.name}>
+                    {teamspace.notes.map((note) => (
+                      <SidebarMenuSubItem key={note.id}>
                         <SidebarMenuSubButton asChild>
                           <Link href='#'>
-                            <span>{page.emoji}</span>
-                            <span>{page.name}</span>
+                            <span>{note.title}</span>
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     ))}
                   </SidebarMenuSub>
-                </CollapsibleContent> */}
+                </CollapsibleContent>
+                <SidebarMenuAction showOnHover>
+                  <Plus />
+                </SidebarMenuAction>
               </SidebarMenuItem>
             </Collapsible>
           ))}

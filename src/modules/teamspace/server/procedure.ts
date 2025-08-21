@@ -1,10 +1,10 @@
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TEAMSPACE_SCHEMA } from "../lib/schema";
 import db from "@/db";
-import { member, teamspace } from "@/db/schema";
+import { member, note, teamspace } from "@/db/schema";
 import { v4 as uuidv4 } from "uuid";
 import z from "zod";
-import { and, eq, or } from "drizzle-orm";
+import { and, eq, inArray, or } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
@@ -83,6 +83,37 @@ export const teamspaceRouter = createTRPCRouter({
           )
         )
         .execute();
-      return teamspaces;
+      // If no teamspaces, return early
+      if (teamspaces.length === 0) {
+        return [];
+      }
+
+      // Collect teamspace ids
+      const teamspaceIds = Array.from(
+        new Set(teamspaces.map((row) => row.teamspace.id))
+      );
+
+      // Fetch notes belonging to these teamspaces
+      const notes = await db
+        .select()
+        .from(note)
+        .where(inArray(note.teamspaceId, teamspaceIds))
+        .execute();
+
+      // Group notes by teamspaceId
+      const notesByTeamspace: Record<string, typeof notes> = {};
+      for (const n of notes) {
+        const key = n.teamspaceId;
+        if (!notesByTeamspace[key]) notesByTeamspace[key] = [];
+        notesByTeamspace[key].push(n);
+      }
+
+      // Attach notes to each teamspace row while preserving existing shape
+      const result = teamspaces.map((row) => ({
+        ...row,
+        notes: notesByTeamspace[row.teamspace.id] ?? [],
+      }));
+
+      return result;
     }),
 });

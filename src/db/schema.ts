@@ -141,8 +141,12 @@ export const note = pgTable("note", {
     .notNull()
     .references(() => teamspace.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull(),
+  createdAt: timestamp("created_at").$defaultFn(
+    () => /* @__PURE__ */ new Date()
+  ),
+  updatedAt: timestamp("updated_at").$defaultFn(
+    () => /* @__PURE__ */ new Date()
+  ),
 });
 
 export const noteDetail = pgTable("note_detail", {
@@ -153,6 +157,10 @@ export const noteDetail = pgTable("note_detail", {
   content: text("content").notNull(),
   type: noteDetailType("type").notNull(),
   order: integer("order").notNull(),
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull(),
+  createdAt: timestamp("created_at").$defaultFn(
+    () => /* @__PURE__ */ new Date()
+  ),
+  updatedAt: timestamp("updated_at").$defaultFn(
+    () => /* @__PURE__ */ new Date()
+  ),
 });
