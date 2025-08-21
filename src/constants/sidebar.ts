@@ -5,7 +5,6 @@ import {
   Command,
   Inbox,
   MessageCircleQuestion,
-  Search,
   Settings2,
   Trash2,
 } from "lucide-react";
@@ -29,12 +28,6 @@ export const sidebarData = {
     },
   ],
   navMain: [
-    {
-      title: "Search",
-      url: "#",
-      icon: Search,
-      dialog: undefined,
-    },
     {
       title: "Settings & Members",
       url: "#",
