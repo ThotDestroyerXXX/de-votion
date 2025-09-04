@@ -2,7 +2,7 @@
 
 import { NavMain } from "@/components/sidebar/nav-main";
 import { NavSecondary } from "@/components/sidebar/nav-secondary";
-import { NavTeamspace } from "@/components/sidebar/nav-teamspace";
+import { NavTeamspace } from "@/modules/teamspace/components/nav-teamspace";
 import { TeamSwitcher } from "@/components/sidebar/team-switcher";
 import {
   Sidebar,
@@ -11,22 +11,20 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { sidebarData } from "@/constants/sidebar";
+import { CreateWorkspaceLogo } from "../../modules/workspace/components/create-workspace-logo";
 import { Organization } from "@/lib/auth";
-import { CreateWorkspaceLogo } from "./create-workspace-logo";
 
 export function AppSidebar({
   username,
   email,
-  organizations,
   activeOrganizationId,
-  memberRole,
+  organizations,
   ...props
 }: React.ComponentProps<typeof Sidebar> & {
   username: string;
   email: string;
-  organizations: Organization[];
   activeOrganizationId: string;
-  memberRole: string;
+  organizations: Organization[];
 }) {
   return (
     <Sidebar className='border-r-0' {...props}>
@@ -35,15 +33,15 @@ export function AppSidebar({
           <TeamSwitcher
             username={username}
             email={email}
-            organizations={organizations}
             currentOrganizationId={activeOrganizationId}
+            organizations={organizations}
           />
           <CreateWorkspaceLogo />
         </div>
         <NavMain
-          items={sidebarData.navMain}
           organization_id={activeOrganizationId}
-          memberRole={memberRole}
+          email={email}
+          organizations={organizations}
         />
       </SidebarHeader>
       <SidebarContent>

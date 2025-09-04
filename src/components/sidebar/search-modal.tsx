@@ -6,7 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { SidebarMenuButton } from "../ui/sidebar";
+import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import {
   Command,
   CommandEmpty,
@@ -26,10 +26,12 @@ export function SearchModal({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <SidebarMenuButton>
-          <Search />
-          <span>Search</span>
-        </SidebarMenuButton>
+        <SidebarMenuItem>
+          <SidebarMenuButton>
+            <Search />
+            <span>Search</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
       </DialogTrigger>
       <DialogContent className='!max-w-md w-full p-2' showCloseButton={false}>
         <DialogTitle hidden />

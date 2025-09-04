@@ -2,11 +2,12 @@ import {
   AudioWaveform,
   Blocks,
   Calendar,
+  CircleUserRound,
   Command,
-  Inbox,
   MessageCircleQuestion,
   Settings2,
   Trash2,
+  UsersRound,
 } from "lucide-react";
 
 export const sidebarData = {
@@ -25,20 +26,6 @@ export const sidebarData = {
       name: "Evil Corp.",
       logo: Command,
       plan: "Free",
-    },
-  ],
-  navMain: [
-    {
-      title: "Settings & Members",
-      url: "#",
-      icon: Settings2,
-      dialog: undefined,
-    },
-    {
-      title: "Invitations",
-      url: "#",
-      icon: Inbox,
-      dialog: undefined,
     },
   ],
   navSecondary: [
@@ -228,3 +215,18 @@ export const sidebarData = {
     },
   ],
 };
+
+export const settingMemberSidebarData = [
+  {
+    icon: CircleUserRound,
+    name: "My Account",
+  },
+  {
+    icon: Settings2,
+    name: "Settings",
+  },
+  {
+    icon: UsersRound,
+    name: "People",
+  },
+];
