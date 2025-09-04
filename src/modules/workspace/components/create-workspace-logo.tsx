@@ -1,5 +1,5 @@
 import { SquarePen } from "lucide-react";
-import { SidebarMenu, SidebarMenuItem } from "../ui/sidebar";
+import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
 
 export function CreateWorkspaceLogo() {

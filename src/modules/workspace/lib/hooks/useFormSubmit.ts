@@ -17,6 +17,20 @@ export const useFormSubmit = () => {
       throw new Error("Failed to create workspace");
     },
   });
+
+  const { mutateAsync: deleteWorkspace } =
+    trpc.workspace.deleteWorkspace.useMutation({
+      onSuccess: async () => {
+        await utils.invalidate();
+        router.push("/");
+        router.refresh();
+      },
+      onError: (error) => {
+        console.error("Failed to delete application status:", error);
+        throw new Error("Failed to delete workspace");
+      },
+    });
+
   const handleContinue = async (data: FormValues) => {
     if (data.name && data.description && data.image && data.type) {
       const { uploadFiles } = genUploader<OurFileRouter>();
@@ -42,7 +56,17 @@ export const useFormSubmit = () => {
     }
   };
 
+  const handleDeleteWorkspace = async () => {
+    try {
+      await deleteWorkspace();
+    } catch (error) {
+      console.error("Failed to delete workspace:", error);
+      throw new Error("Failed to delete workspace");
+    }
+  };
+
   return {
     handleContinue,
+    handleDeleteWorkspace,
   };
 };

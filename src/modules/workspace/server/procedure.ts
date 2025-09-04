@@ -1,5 +1,5 @@
 import db from "@/db";
-import { member, organization } from "@/db/schema";
+import { invitation, organization, user } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { and, eq } from "drizzle-orm";
 import { FORM_SCHEMA } from "../lib/schema";
@@ -13,19 +13,11 @@ export const workspaceRouter = createTRPCRouter({
     if (!userId) {
       throw new Error("User is not authenticated.");
     }
-    const workspace = db
-      .select()
-      .from(organization)
-      .innerJoin(member, eq(member.organizationId, organization.id))
-      .where(
-        and(
-          eq(organization.id, member.organizationId),
-          eq(member.userId, userId)
-        )
-      )
-      .execute();
+    const organizations = await auth.api.listOrganizations({
+      headers: await headers(),
+    });
 
-    return workspace;
+    return organizations;
   }),
 
   createWorkspace: protectedProcedure
@@ -68,4 +60,102 @@ export const workspaceRouter = createTRPCRouter({
 
       return data;
     }),
+  deleteWorkspace: protectedProcedure.mutation(async ({ ctx }) => {
+    const userId = ctx.userId;
+    const activeOrganizationId = ctx.organizationId;
+    if (!userId || !activeOrganizationId) {
+      throw new Error("User is not authenticated.");
+    }
+
+    // Implement the logic to delete the workspace
+    await auth.api.deleteOrganization({
+      headers: await headers(),
+      body: {
+        organizationId: activeOrganizationId,
+      },
+    });
+  }),
+
+  getPendingInvite: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.userId;
+
+    if (!userId) {
+      throw new Error("User is not authenticated.");
+    }
+
+    if (!ctx.users?.email) {
+      return [];
+    }
+
+    try {
+      const data = await db
+        .select({
+          invitation,
+          userName: user.name,
+          organizationName: organization.name,
+        })
+        .from(invitation)
+        .innerJoin(user, eq(invitation.inviterId, user.id))
+        .innerJoin(organization, eq(invitation.organizationId, organization.id))
+        .where(
+          and(
+            eq(invitation.email, ctx.users.email),
+            eq(invitation.status, "pending")
+          )
+        )
+        .execute();
+
+      return data;
+    } catch (error) {
+      console.error("Error fetching pending invites:", error);
+      return [];
+    }
+  }),
+
+  getMembers: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.userId;
+    const activeOrganizationId = ctx.organizationId;
+
+    if (!userId) {
+      throw new Error("User is not authenticated.");
+    }
+
+    if (!activeOrganizationId) {
+      // Return empty result if no organization is selected
+      return {
+        memberList: [],
+        memberRole: "",
+        pendingMember: [],
+      };
+    }
+
+    const membersResponse = await auth.api.listMembers({
+      headers: await headers(),
+      query: {
+        organizationId: activeOrganizationId,
+        sortBy: "createdAt",
+        sortDirection: "desc",
+      },
+    });
+
+    const member = membersResponse.members.filter(
+      (member) => member.userId === userId
+    );
+    const memberRole = member[0]?.role;
+
+    const pendingMember = await auth.api.listInvitations({
+      headers: await headers(),
+      query: {
+        organizationId: activeOrganizationId,
+      },
+    });
+
+    return {
+      memberList: membersResponse.members,
+      memberRole,
+      pendingMember: pendingMember.filter(
+        (member) => member.status === "pending"
+      ),
+    };
+  }),
 });

@@ -1,43 +1,32 @@
 "use client";
 
-import { type LucideIcon } from "lucide-react";
-
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { CreateTeamspaceDialog } from "./create-teamspace-dialog";
+import { SidebarMenu } from "@/components/ui/sidebar";
+import { CreateTeamspaceDialog } from "../../modules/teamspace/components/create-teamspace-dialog";
 import { SearchModal } from "./search-modal";
+import { SettingMemberModal } from "./setting-member/setting-member-modal";
+import { InvitationModal } from "./invitation-modal";
+import { trpc } from "@/trpc/client";
+import { Organization } from "@/lib/auth";
 
 export function NavMain({
-  items,
   organization_id,
-  memberRole,
+  email,
+  organizations,
 }: Readonly<{
-  items: {
-    title: string;
-    url: string;
-    icon: LucideIcon;
-    isActive?: boolean;
-    dialog?: React.ElementType;
-  }[];
   organization_id: string;
-  memberRole: string;
+  email: string;
+  organizations: Organization[];
 }>) {
+  const [{ memberRole }] = trpc.workspace.getMembers.useSuspenseQuery();
   return (
     <SidebarMenu>
       <SearchModal organization_id={organization_id} />
-      {items.map((item) => (
-        <SidebarMenuItem key={item.title}>
-          <SidebarMenuButton asChild isActive={item.isActive}>
-            <a href={item.url}>
-              <item.icon />
-              <span>{item.title}</span>
-            </a>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      ))}
+      <SettingMemberModal
+        email={email}
+        workspaceId={organization_id}
+        organizations={organizations}
+      />
+      <InvitationModal />
 
       {(memberRole === "admin" || memberRole === "owner") && (
         <CreateTeamspaceDialog organization_id={organization_id} />

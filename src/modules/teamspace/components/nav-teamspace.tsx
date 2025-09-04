@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { trpc } from "@/trpc/client";
+import { NoteDropdown } from "../../note/components/note-dropdown";
+import { useNoteHandler } from "@/modules/note/lib/hooks/useNoteHandler";
 
 export function NavTeamspace({
   activeOrganizationId,
@@ -29,6 +31,8 @@ export function NavTeamspace({
   const [data] = trpc.teamspace.getTeamspaces.useSuspenseQuery({
     organization_id: activeOrganizationId,
   });
+
+  const { handleClick } = useNoteHandler();
 
   return (
     <SidebarGroup>
@@ -51,21 +55,38 @@ export function NavTeamspace({
                 </CollapsibleTrigger>
 
                 <CollapsibleContent>
-                  <SidebarMenuSub>
+                  <SidebarMenuSub className='w-full'>
                     {teamspace.notes.map((note) => (
-                      <SidebarMenuSubItem key={note.id}>
+                      <SidebarMenuSubItem
+                        key={note.id}
+                        className='flex flex-row justify-between gap-2'
+                      >
                         <SidebarMenuSubButton asChild>
                           <Link href='#'>
-                            <span>{note.title}</span>
+                            <span className='line-clamp-1'>{note.title}</span>
                           </Link>
                         </SidebarMenuSubButton>
+                        {(teamspace.member.role === "admin" ||
+                          teamspace.member.role === "owner" ||
+                          teamspace.teamspace.permission === "public") && (
+                          <SidebarMenuAction asChild>
+                            <NoteDropdown noteId={note.id} />
+                          </SidebarMenuAction>
+                        )}
                       </SidebarMenuSubItem>
                     ))}
                   </SidebarMenuSub>
                 </CollapsibleContent>
-                <SidebarMenuAction showOnHover>
-                  <Plus />
-                </SidebarMenuAction>
+                {(teamspace.member.role === "admin" ||
+                  teamspace.member.role === "owner" ||
+                  teamspace.teamspace.permission === "public") && (
+                  <SidebarMenuAction
+                    showOnHover
+                    onClick={() => handleClick(teamspace.teamspace.id)}
+                  >
+                    <Plus />
+                  </SidebarMenuAction>
+                )}
               </SidebarMenuItem>
             </Collapsible>
           ))}

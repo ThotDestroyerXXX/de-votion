@@ -16,24 +16,24 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Organization } from "@/lib/auth";
 import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Loading from "../loading";
 import { trpc } from "@/trpc/client";
+import { Organization } from "@/lib/auth";
 
 export function TeamSwitcher({
   username,
   email,
-  organizations,
   currentOrganizationId,
+  organizations,
 }: Readonly<{
   username: string;
   email: string;
-  organizations: Organization[];
   currentOrganizationId: string;
+  organizations: Organization[];
 }>) {
   const router = useRouter();
   const utils = trpc.useUtils();
