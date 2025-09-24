@@ -1,25 +1,10 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  boolean,
-  pgEnum,
-  integer,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
 
 export const workspaceType = pgEnum("workspace_type", ["personal", "team"]);
 export const teamspacePermission = pgEnum("teamspace_permission", [
   "public",
   "default",
   "private",
-]);
-
-export const noteDetailType = pgEnum("note_detail_type", [
-  "list",
-  "code",
-  "normal text",
-  "header 1",
-  "header 2",
 ]);
 
 export const user = pgTable("user", {
@@ -141,22 +126,7 @@ export const note = pgTable("note", {
     .notNull()
     .references(() => teamspace.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
-  createdAt: timestamp("created_at").$defaultFn(
-    () => /* @__PURE__ */ new Date()
-  ),
-  updatedAt: timestamp("updated_at").$defaultFn(
-    () => /* @__PURE__ */ new Date()
-  ),
-});
-
-export const noteDetail = pgTable("note_detail", {
-  id: text("id").primaryKey(),
-  noteId: text("note_id")
-    .notNull()
-    .references(() => note.id, { onDelete: "cascade" }),
-  content: text("content").notNull(),
-  type: noteDetailType("type").notNull(),
-  order: integer("order").notNull(),
+  content: text("content").notNull().default(""),
   createdAt: timestamp("created_at").$defaultFn(
     () => /* @__PURE__ */ new Date()
   ),
