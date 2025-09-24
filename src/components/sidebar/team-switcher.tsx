@@ -72,6 +72,7 @@ export function TeamSwitcher({
                     },
                     {
                       onSuccess: async () => {
+                        router.push("/");
                         router.refresh();
                         await utils.invalidate();
                         setPending(false);

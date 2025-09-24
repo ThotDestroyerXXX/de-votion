@@ -13,3 +13,11 @@ export const NOTE_SCHEMA = z.object({
 });
 
 export type NoteValues = z.infer<typeof NOTE_SCHEMA>;
+
+export const NOTE_DETAIL_SCHEMA = z.object({
+  noteId: z.string(),
+  title: z.string().min(1).max(255),
+  content: z.string(),
+});
+
+export type NoteDetailValues = z.infer<typeof NOTE_DETAIL_SCHEMA>;

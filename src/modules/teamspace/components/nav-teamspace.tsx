@@ -62,7 +62,7 @@ export function NavTeamspace({
                         className='flex flex-row justify-between gap-2'
                       >
                         <SidebarMenuSubButton asChild>
-                          <Link href='#'>
+                          <Link href={`/${note.id}`}>
                             <span className='line-clamp-1'>{note.title}</span>
                           </Link>
                         </SidebarMenuSubButton>
